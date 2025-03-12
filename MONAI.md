@@ -10,13 +10,12 @@ from monai.losses import DiceCELoss,DiceLoss,  DiceFocalLoss
 
 ```markmap
 # Loss
-##  DiceLoss
-## DiceCELoss
-## DiceFocalLoss
-## GeneralizedDiceFocalLoss
-## GeneralizedDiceLoss
-## GeneralizedWassersteinDiceLoss
-## MaskedDiceLoss
+## Dice
+### DiceFocalLoss
+### GeneralizedDiceFocalLoss
+### GeneralizedDiceLoss
+### GeneralizedWassersteinDiceLoss
+### MaskedDiceLoss
 ```
 
 
@@ -214,6 +213,54 @@ __all__ = [
 
 
 
+```mermaid
+graph TD
+    A[准备数据] --> B[定义模型]
+    B --> C[训练循环]
+    C --> D[验证/测试]
+    D --> E{是否满足停止条件?}
+    E -->|否| C
+    E -->|是| F[保存模型]
+
+    subgraph 数据准备
+        A1[加载数据] --> A2[预处理/增强]
+        A2 --> A3[划分数据集]
+        A3 --> A4[创建DataLoader]
+    end
+
+    subgraph 模型定义
+        B1[定义网络结构] --> B2[初始化模型]
+        B2 --> B3[选择损失函数]
+        B2 --> B4[选择优化器]
+    end
+
+    subgraph 训练循环
+        C1[移动数据/模型到设备] --> C2[设置模型为train模式]
+        C2 --> C3[遍历DataLoader]
+        C3 --> C4[前向传播]
+        C4 --> C5[计算损失]
+        C5 --> C6[反向传播]
+        C6 --> C7[梯度清零]
+        C7 --> C8[更新参数]
+        C8 --> C3
+    end
+
+    subgraph 验证/测试
+        D1[设置模型为eval模式] --> D2[遍历验证DataLoader]
+        D2 --> D3[前向传播]
+        D3 --> D4[计算指标]
+        D4 --> D2
+    end
+
+    style A fill:#F9E79F,stroke:#333
+    style B fill:#AED6F1,stroke:#333
+    style C fill:#ABEBC6,stroke:#333
+    style D fill:#F5B7B1,stroke:#333
+    style F fill:#D7BDE2,stroke:#333
+```
+
+
+
 
 
 ### 示例
@@ -297,4 +344,30 @@ for epoch in range(max_epochs):
 
 
 ## Transform
+
+
+
+```markmap
+# LoadImaged 
+## 加载图像，字典方式
+# EnsureChannelFirstd
+## 确保channel最为第一维
+# Orientationd
+## 指定加载图像的轴方向，内存方向一致取SPL
+# ScaleIntensityRanged
+## 指定图像缩放，一般缩放到[0,1]或[-1,1]
+# RandAffined
+## 随机仿射变换，支持旋转、平移、缩放
+# RandAdjustConstractd
+## 随机调整对比度
+# CropForgroundd
+## 裁剪前景图像
+# Spacingd
+## 图像重采样到指定Spacing
+# RandCropByPosNegLabeld
+## 按照指定正负样本比例裁剪强将和背景图像，指定patch大小
+# MapLabelValued
+## 映射标签值，用于从多标签图像中抽取指定标签用于训练
+
+```
 
